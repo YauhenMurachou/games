@@ -1,0 +1,19 @@
+{
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 100,
+  "importOrder": [
+    "^dayjs/locale/(.*)$",
+    "<THIRD_PARTY_MODULES>",
+    "^package.json$",
+    "^src/(?!assets)((?!\\.css$).)*$",
+    "^(src/assets|assets)/(.*)$",
+    "^(?!src)(.*)\\.css$",
+    "^src/styles/(.*)\\.css$",
+    "^src/(.*)$",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true,
+  "endOfLine": "lf"
+}
