@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-// import styles from './style.module.css';
 import { RootState } from '../../redux/store';
 import {
   Button,
@@ -9,10 +8,12 @@ import {
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { gameOpened, gamesFiltered } from '../../redux/gameSlice';
-import { NavLink } from 'react-router-dom';
-import { createUrl } from '../../utils';
+import { gamesFiltered } from '../../redux/gameSlice';
 import { useEffect, useState } from 'react';
+import GameTitle from '../../components/GameTitle/GameTitle';
+
+import styles from './style.module.css';
+import React from 'react';
 
 const Main = () => {
   const [provider, setProvider] = useState<string>('');
@@ -24,59 +25,71 @@ const Main = () => {
     allGames: state.games.allGames,
   }));
   const dispatch = useDispatch();
-	
-  const loadMore = () => setLastIndex((prevState) => prevState + 12);
-
-  const openGame = (title: string) => {
-    dispatch(gameOpened(title));
-  };
 
   useEffect(() => {
     if (provider) {
-      dispatch(gamesFiltered({ value: provider }));
+      dispatch(gamesFiltered({ value: provider, field: 'provider' }));
+    } else if (currencyLocal) {
+      dispatch(gamesFiltered({ value: currencyLocal, field: 'real' }));
     }
-  }, [provider]);
+  }, [provider, currencyLocal]);
+
+  const loadMore = () => setLastIndex((prevState) => prevState + 12);
+
+  const handleProvider = (e: SelectChangeEvent) => {
+    setProvider(e.target.value as string);
+    if (currencyLocal) {
+      setCurrencyLocal('');
+    }
+  };
+
+  const handleCurrency = (e: SelectChangeEvent) => {
+    setCurrencyLocal(e.target.value as string);
+    if (provider) {
+      setProvider('');
+    }
+  };
 
   return (
     <>
-      <FormControl fullWidth>
-        <InputLabel id="provider">Провайдер</InputLabel>
-        <Select
-          value={provider}
-          labelId="provider"
-          label="Провайдер"
-          onChange={(e: SelectChangeEvent) => setProvider(e.target.value as string)}
-        >
-          {providers.map((item) => (
-            <MenuItem value={item}>{item}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <FormControl fullWidth>
-        <InputLabel id="currency">Валюта</InputLabel>
-        <Select
-          value={currencyLocal}
-          labelId="currency"
-          label="Валюта"
-          onChange={(e: SelectChangeEvent) => setCurrencyLocal(e.target.value as string)}
-        >
-          {currency.map((item) => (
-            <MenuItem value={item}>{item}</MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <ul>
+      <div className={styles.filters}>
+        <FormControl fullWidth>
+          <InputLabel id="provider">Провайдер</InputLabel>
+          <Select
+            value={provider}
+            labelId="provider"
+            label="Провайдер"
+            onChange={(e: SelectChangeEvent) => handleProvider(e)}
+          >
+            {providers.map((item) => (
+              <MenuItem value={item}>{item}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="currency">Валюта</InputLabel>
+          <Select
+            value={currencyLocal}
+            labelId="currency"
+            label="Валюта"
+            onChange={(e: SelectChangeEvent) => handleCurrency(e)}
+          >
+            {currency.map((item) => (
+              <MenuItem value={item}>{item}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+      <ul className={styles.list}>
         {allGames.slice(0, lastIndex).map((game) => (
-          <li key={game[0]}>
-            <NavLink onClick={() => openGame(game[1].title)} to={`/games/${createUrl(game[0])}`}>
-              <img src={`https://cdn2.softswiss.net/i/s2/${game[0]}.png`} alt={game[1].title} />
-              {game[1].title}
-            </NavLink>
-          </li>
+          <React.Fragment key={game[0]}>
+            <GameTitle game={game} />
+          </React.Fragment>
         ))}
       </ul>
-      {/* <Button onClick={() => loadMore(showedGames.length - 1)}>Показать ещё</Button> */}
-      <Button onClick={loadMore}>Показать ещё</Button>
+      <Button onClick={loadMore} variant="contained" disabled={allGames.length - 1 === lastIndex}>
+        Показать ещё
+      </Button>
     </>
   );
 };
