@@ -1,0 +1,13 @@
+.filters {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 5rem;
+	padding-bottom: 1rem;
+}
+
+.list {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+	row-gap: 2rem;
+	padding-bottom: 1rem;
+}
