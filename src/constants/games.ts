@@ -1,4 +1,6 @@
-export const games = {
+import { GamesInitialType } from '../types';
+
+export const gamesObj: GamesInitialType = {
   '1spin4win/10LuckySpins': {
     title: '10 Lucky Spins',
     provider: '1spin4win',
